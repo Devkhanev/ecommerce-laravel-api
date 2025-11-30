@@ -4,13 +4,20 @@ services:
   php:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/php/Dockerfile
     container_name: ecommerce_php
     working_dir: /var/www
     volumes:
       - ./:/var/www
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=ecommerce
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=${DB_PASSWORD}
     networks:
       - laravel
+    depends_on:
+      - mysql
 
   nginx:
     image: nginx:latest
@@ -29,12 +36,14 @@ services:
     image: mysql:8.0
     container_name: ecommerce_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ecommerce
       MYSQL_USER: laravel
-      MYSQL_PASSWORD: secret
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
     networks:
       - laravel
 
