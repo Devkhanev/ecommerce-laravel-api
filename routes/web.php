@@ -1,7 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+
+//Route::post('/auth/register', [AuthController::class, 'register']);
