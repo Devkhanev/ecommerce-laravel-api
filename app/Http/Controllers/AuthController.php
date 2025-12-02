@@ -56,9 +56,7 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            // ✅ Вместо auth('api')->login(), используй JwtAuth напрямую
 
-            // Создай токен вручную
             $token = JwtAuth::fromUser($user);
 
             return response()->json([
