@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Middleware\CheckYookassaIp;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::post('/payment/create', [PaymentController::class, 'createPayment'])->name('payment.create');
 
+Route::get('/webhooks/check-payment/{order}', [PaymentController::class, 'checkPaymentStatus'])->name('payment.check');
 
-//Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/webhooks/yookassa', [PaymentController::class, 'handleWebhook'])
+    ->name('webhook.yookassa');
+//    ->middleware(CheckYookassaIp::class);

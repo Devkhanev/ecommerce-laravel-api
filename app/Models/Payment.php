@@ -10,10 +10,35 @@ class Payment extends Model
         'order_id',
         'amount',
         'status',
-        'stripe_payment_id',
+        'payment_method',
+        'yookassa_payment_id',
+        'description',
+        'paid_at',
     ];
 
-    public function order(){
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'paid_at' => 'datetime',
+    ];
+
+    public function order()
+    {
         return $this->belongsTo(Order::class);
+    }
+
+    // Скоупы для удобства
+    public function scopeSucceeded($query)
+    {
+        return $query->where('status', 'succeeded');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeCanceled($query)
+    {
+        return $query->where('status', 'canceled');
     }
 }

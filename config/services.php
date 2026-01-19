@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'yookassa' => [
+        'shop_id' => env('YOOKASSA_SHOP_ID'),
+        'secret_key' => env('YOOKASSA_API_KEY'),
+    ],
 
 ];

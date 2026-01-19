@@ -10,20 +10,26 @@ class Order extends Model
         'user_id',
         'total_price',
         'status',
+        'paid_at',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $casts = [
+        'paid_at' => 'datetime',
+        'total_price' => 'decimal:2',
+    ];
 
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function payment()
+    public function user()
     {
-        return $this->hasOne(Payment::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

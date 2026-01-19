@@ -6,8 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-
 
 class AuthController extends Controller
 {
@@ -39,7 +37,6 @@ class AuthController extends Controller
         }
     }
 
-
     public function login(Request $request)
     {
         try {
@@ -50,12 +47,11 @@ class AuthController extends Controller
 
             $user = User::where('email', $validated['email'])->first();
 
-            if (!$user || !Hash::check($validated['password'], $user->password)) {
+            if (! $user || ! Hash::check($validated['password'], $user->password)) {
                 return response()->json([
                     'message' => 'Invalid credentials',
                 ], 401);
             }
-
 
             $token = JwtAuth::fromUser($user);
 
@@ -76,6 +72,7 @@ class AuthController extends Controller
     {
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
+
             return response()->json([
                 'message' => 'Logout successfully',
             ]);
@@ -86,7 +83,4 @@ class AuthController extends Controller
             ], 400);
         }
     }
-
-
-
 }

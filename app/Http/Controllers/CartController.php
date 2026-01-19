@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
-use App\Models\Cart;
 
 class CartController extends Controller
 {
@@ -14,9 +14,8 @@ class CartController extends Controller
             $user = auth()->user();
             $cart = $user->cart()->with('cartItems.product')->first();
 
-
-            if(!$cart){
-                    $cart = Cart::create(['user_id' => $user->id]);
+            if (! $cart) {
+                $cart = Cart::create(['user_id' => $user->id]);
             }
 
             return response()->json([
@@ -27,11 +26,12 @@ class CartController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ],500);
+            ], 500);
         }
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         try {
             $validate = $request->validate([
@@ -42,17 +42,16 @@ class CartController extends Controller
             $user = auth()->user();
 
             $cart = $user->cart;
-            if(!$cart){
+            if (! $cart) {
                 $cart = Cart::create(['user_id' => $user->id]);
             }
 
             $cartItem = $cart->cartItems()->where('product_id', $validate['product_id'])->first();
 
-            if($cartItem){
+            if ($cartItem) {
                 $cartItem->quantity += $validate['quantity'];
                 $cartItem->save();
-            }
-            else{
+            } else {
                 $cartItem = CartItem::create([
                     'cart_id' => $cart->id,
                     'product_id' => $validate['product_id'],
@@ -65,15 +64,16 @@ class CartController extends Controller
                 'cartItem' => $cartItem,
             ], 201);
 
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong',
                 'error' => $e->getMessage(),
-            ],500);
+            ], 500);
         }
     }
 
-    public function update(Request $request, string $id){
+    public function update(Request $request, string $id)
+    {
 
         try {
             $validated = $request->validate([
@@ -82,17 +82,17 @@ class CartController extends Controller
 
             $user = auth()->user();
             $cart = $user->cart;
-            if (!$cart) {
+            if (! $cart) {
                 return response()->json([
                     'message' => 'Cart not found',
                 ], 404);
             }
             $cartItem = $cart->cartItems()->where('product_id', $id)->first();
 
-            if(!$cartItem){
+            if (! $cartItem) {
                 return response()->json([
                     'message' => 'Product not found in cart',
-                ] ,404);
+                ], 404);
             }
             $cartItem->quantity = $validated['quantity'];
             $cartItem->save();
@@ -102,26 +102,26 @@ class CartController extends Controller
                 'cartItem' => $cartItem,
             ], 200);
 
-
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong',
                 'error' => $e->getMessage(),
-            ],500);
+            ], 500);
         }
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id)
+    {
         try {
             $user = auth()->user();
             $cart = $user->cart;
-            if (!$cart) {
+            if (! $cart) {
                 return response()->json([
                     'message' => 'Cart not found',
                 ], 404);
             }
             $cartItem = $cart->cartItems()->where('product_id', $id)->first();
-            if (!$cartItem) {
+            if (! $cartItem) {
                 return response()->json([
                     'message' => 'Product not found in cart',
                 ], 404);
@@ -130,14 +130,13 @@ class CartController extends Controller
 
             return response()->json([
                 'message' => 'Product deleted successfully',
-            ],200);
+            ], 200);
 
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong',
                 'error' => $e->getMessage(),
-            ],500);
+            ], 500);
         }
     }
-
 }

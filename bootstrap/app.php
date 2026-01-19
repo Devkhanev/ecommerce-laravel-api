@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt' => \App\Http\Middleware\JwtMiddleware::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/yookassa',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

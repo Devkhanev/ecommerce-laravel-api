@@ -18,8 +18,9 @@ class JwtMiddleware
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
+
             return $next($request);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Unauthenticated.',
                 'error' => $e->getMessage(),

@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\CartItem;
-use App\Models\Cart;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-
     public function store(Request $request)
     {
 
-        try{
+        try {
             $user = auth()->user();
             $cart = $user->cart;
 
-            if (!$cart || $cart->cartItems->isEmpty()) {
+            if (! $cart || $cart->cartItems->isEmpty()) {
                 return response()->json(['message' => 'Cart is empty'], 400);
             }
 
@@ -29,7 +26,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'total_price' => $total,
-                'status' => 'pending'
+                'status' => 'pending',
             ]);
 
             foreach ($cart->cartItems as $cartItem) {
@@ -45,7 +42,7 @@ class OrderController extends Controller
 
             return response()->json([
                 'message' => 'Order created',
-                'order' => $order->load('orderItems.product')
+                'order' => $order->load('orderItems.product'),
             ], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -53,7 +50,8 @@ class OrderController extends Controller
 
     }
 
-    public function index(){
+    public function index()
+    {
 
         try {
             $user = auth()->user();
@@ -61,14 +59,14 @@ class OrderController extends Controller
 
             return response()->json([
                 'message' => 'Orders retrieved successfully',
-                'orders' => $orders
-            ] ,200);
+                'orders' => $orders,
+            ], 200);
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to retrieve orders',
-                'error' => $e->getMessage()
-            ] ,500);
+                'error' => $e->getMessage(),
+            ], 500);
         }
 
     }
@@ -76,19 +74,20 @@ class OrderController extends Controller
     public function show($id)
     {
         try {
-            $user = auth()->user();
-            $order = $user->orders()->with('orderItems.product')->find($id);
+            $order = Order::with('orderItems.product')->find($id);
 
-            if (!$order) {
+            if (! $order) {
                 return response()->json([
                     'message' => 'Order not found',
                 ], 404);
             }
 
-            return response()->json([
-                'message' => 'Order retrieved successfully',
-                'order' => $order,
-            ], 200);
+            // Если нужна проверка прав доступа:
+            // if (auth()->check() && $order->user_id !== auth()->id()) {
+            //     abort(403);
+            // }
+
+            return view('orders.show', ['order' => $order]);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -97,5 +96,4 @@ class OrderController extends Controller
             ], 500);
         }
     }
-
 }

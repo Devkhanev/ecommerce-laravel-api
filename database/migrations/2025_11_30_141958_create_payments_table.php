@@ -6,26 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
             $table->decimal('amount', 10, 2)->unsigned();
-            $table->string('status');
-            $table->string('stripe_payment_id')->nullable();
+            $table->enum('status', ['pending', 'succeeded', 'canceled', 'waiting_for_capture']);
+            $table->string('payment_method')->default('yookassa');
+            $table->string('yookassa_payment_id')->unique()->nullable();
+            $table->string('description')->nullable();
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
+
+            // Индексы для быстрого поиска
+            $table->index('order_id');
+            $table->index('yookassa_payment_id');
+            $table->index('status');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('payment');
+        Schema::dropIfExists('payments');
     }
 };

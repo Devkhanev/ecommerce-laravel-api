@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->text('description')->nullable();
-            $table->decimal('price',10,2)->unsigned();
+            $table->decimal('price', 10, 2)->unsigned();
             $table->unsignedInteger('stock');
             $table->timestamps();
         });

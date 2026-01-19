@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
@@ -13,6 +15,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{id}', [ProductController::class, 'show']);
+
+
+Route::post('/payments/confirm', [PaymentController::class, 'confirmPayment']);
 
 
 
@@ -35,6 +40,11 @@ Route::middleware('jwt')->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
+
+
+    Route::post('/payments/create', [PaymentController::class, 'createPayment']);
+
+
 
 });
 
